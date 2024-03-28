@@ -1,0 +1,20 @@
+session_name: codemirror-play-front
+windows:
+  - window_name: watchers-window
+    # start_directory: ./test-rollup
+    layout: tiled
+    #layout: main-horizontal
+    # shell_command_before:
+      # - cd ./fileuploaddemo # run as a first command in all panes
+    options:
+      main-pane-height: 30
+    panes:
+      - shell_command:
+        - yarn sr
+      - shell_command:
+        - yarn br
+        # - yarn dlx live-server --port=35729 ./public
+        # - npx live-server --port=35729 ./public
+      - shell_command:
+        - yarn dev
+      - pane

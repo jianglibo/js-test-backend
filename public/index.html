@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Codemirror Play</title>
+</head>
+
+<body>
+	<p>Backend</p>
+	<h2>Execute response.</h2>
+	<div id="execute-response"></div>
+
+	<h2>Completion response.</h2>
+	<div id="completion-response"></div>
+
+	<script>
+		// use fetch api to get data from backend, /completion and /execute
+		// Fetch data from /completion endpoint
+		fetch('/completion')
+			.then(response => response.json())
+			.then(data => { 
+				console.log(data);
+				document.getElementById('completion-response').innerHTML = JSON.stringify(data, null, 2);
+			 })
+			.catch(error => console.error('Error:', error));
+
+		// Fetch data from /execute endpoint
+		// Define your cmd parameter
+		let cmd = 'ls -lh, hello world';
+
+		// Create a URL object
+		let url = new URL('/execute', window.location.origin);
+
+		// Create a URLSearchParams object
+		let params = new URLSearchParams();
+		params.append('cmd', cmd);
+
+		// Append the parameters to the URL
+		url.search = params.toString();
+
+		fetch(url)
+			.then(response => response.json())
+			.then(data => {
+				console.log(data);
+				document.getElementById('execute-response').innerHTML = JSON.stringify(data, null, 2);
+			})
+			.catch(error => console.error('Error:', error));
+
+	</script>
+
+	<script>
+		// get the url schema
+		let url = new URL(window.location.href);
+		let schema = url.protocol;
+		if (schema === 'http:') {
+			document.write('<script src="http://localhost:35729/livereload.js?snipver=1"></' + 'script>')
+		} else {
+			document.write('<script src="https://' + url.host + '/livereload.js?snipver=1&port=443"></' + 'script>')
+		}
+		// document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+		// 	':35729/livereload.js?snipver=1"></' + 'script>')
+	</script>
+
+</body>
+
+</html>
