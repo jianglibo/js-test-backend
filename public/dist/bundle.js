@@ -42762,6 +42762,7 @@ var index = () => {
     const app = express();
     const port = process.env.EXPRESS_PORT || 3000;
     app.use(express.static('public'));
+    app.use(express.json());
     let cache = null;
     app.get("/completion", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // get the url from environment variable COMPLETION_ENDPOINT
@@ -42980,6 +42981,15 @@ var index = () => {
             name = name + '.html';
         }
         res.sendFile(require$$0$3.resolve(`public/pages/${name}`));
+    });
+    app.post("/pages/form-1", (req, res) => {
+        // response all headers and body
+        // body is json
+        console.log(req.body);
+        res.send({
+            headers: req.headers,
+            body: req.body
+        });
     });
     // return index.html if no router matched
     app.get('*', (req, res) => {

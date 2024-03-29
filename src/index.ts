@@ -21,6 +21,7 @@ export default () => {
 	const app: Express = express();
 	const port = process.env.EXPRESS_PORT || 3000;
 	app.use(express.static('public'))
+	app.use(express.json())
 
 	let cache: unknown = null;
 
@@ -260,6 +261,18 @@ export default () => {
 			name = name + '.html'
 		}
 		res.sendFile(path.resolve(`public/pages/${name}`));
+	})
+
+	app.post("/pages/form-1", (req: Request, res: Response) => {
+		// response all headers and body
+		// body is json
+		console.log(req.body)
+		res.send(
+			{
+				headers: req.headers,
+				body: req.body
+			}
+		);
 	})
 
 	// return index.html if no router matched
