@@ -1,6 +1,5 @@
-import { log } from "console";
-import express, { Express, Request, Response } from "express";
-import path, { resolve } from "path";
+import express, { Express, NextFunction, Request, Response } from "express";
+import path from "path";
 var shelljs = require("shelljs");
 
 interface PostResponse {
@@ -12,6 +11,25 @@ interface PostResponse {
 
 type AllActions = 'PUSH_STATE' | 'SET_VALUE' | 'APPEND_CLASSES' | 'REMOVE_NODE' | 'INSERT_HTML' | 'REDIRECT' | 'RELOAD' | 'TOAST' | 'SWAL2' | 'REPLACE_NODE'
 
+// Define the middleware function
+function copyHeaders(req: Request, res: Response, next: NextFunction) {
+	// Define an array of header names to be copied
+	const headersToCopy = ['Ph-Id', 'Ph-Group-Id']; // Add more headers as needed
+
+	headersToCopy.forEach(header => {
+		// Check if the header exists in the request
+		console.log(req.headers)
+		if (req.header(header)) {
+			// Copy the header to the response
+			res.setHeader(header, req.header(header) as string);
+		}
+	});
+
+	// Call the next middleware in the chain
+	next();
+}
+
+
 interface ResponseDataItem {
 	action: AllActions,
 	params: { [key: string]: any }
@@ -22,6 +40,7 @@ export default () => {
 	const port = process.env.EXPRESS_PORT || 3000;
 	app.use(express.static('public'))
 	app.use(express.json())
+	app.use(copyHeaders)
 
 	let cache: unknown = null;
 
@@ -253,6 +272,24 @@ export default () => {
 		} else {
 			res.sendFile(path.resolve('public/page.html'));
 		}
+	})
+	app.get("/pages/ajax-change", (req: Request, res: Response) => {
+		res.json({
+			data: [
+				{
+					value: 10,
+					name: 'A'
+				},
+				{
+					value: 20,
+					name: 'B'
+				},
+				{
+					value: 30,
+					name: 'C'
+				}
+			]
+		});
 	})
 
 	app.get("/pages/:name", (req: Request, res: Response) => {

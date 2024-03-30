@@ -42758,11 +42758,27 @@ var _package = expressExports;
 var express = /*@__PURE__*/getDefaultExportFromCjs(_package);
 
 var shelljs = require("shelljs");
+// Define the middleware function
+function copyHeaders(req, res, next) {
+    // Define an array of header names to be copied
+    const headersToCopy = ['Ph-Id', 'Ph-Group-Id']; // Add more headers as needed
+    headersToCopy.forEach(header => {
+        // Check if the header exists in the request
+        console.log(req.headers);
+        if (req.header(header)) {
+            // Copy the header to the response
+            res.setHeader(header, req.header(header));
+        }
+    });
+    // Call the next middleware in the chain
+    next();
+}
 var index = () => {
     const app = express();
     const port = process.env.EXPRESS_PORT || 3000;
     app.use(express.static('public'));
     app.use(express.json());
+    app.use(copyHeaders);
     let cache = null;
     app.get("/completion", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // get the url from environment variable COMPLETION_ENDPOINT
@@ -42974,6 +42990,24 @@ var index = () => {
         else {
             res.sendFile(require$$0$3.resolve('public/page.html'));
         }
+    });
+    app.get("/pages/ajax-change", (req, res) => {
+        res.json({
+            data: [
+                {
+                    value: 10,
+                    name: 'A'
+                },
+                {
+                    value: 20,
+                    name: 'B'
+                },
+                {
+                    value: 30,
+                    name: 'C'
+                }
+            ]
+        });
     });
     app.get("/pages/:name", (req, res) => {
         let name = req.params.name;
