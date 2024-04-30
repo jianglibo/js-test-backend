@@ -2074,6 +2074,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/busboy@npm:*":
+  version: 1.5.3
+  resolution: "@types/busboy@npm:1.5.3"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/f766aebd29773828dbe69ca2f8edfbc578568aade8a34214cd1c3f817b098ac000e6e8fcf652eed81b60bcf0b184b399821909709c16b4432bf92e5afc794761
+  languageName: node
+  linkType: hard
+
 "@types/connect@npm:*":
   version: 3.4.38
   resolution: "@types/connect@npm:3.4.38"
@@ -2097,6 +2106,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/express-fileupload@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "@types/express-fileupload@npm:1.5.0"
+  dependencies:
+    "@types/busboy": "npm:*"
+    "@types/express": "npm:*"
+  checksum: 10c0/0f6075d04ea111ad4a49b43d0fd43b44aac67793175547347a7bfff53d9a53830d519d39585b5a530a6feee06086f1b51898c0a3bfd96ce703f7ebb923d025c5
+  languageName: node
+  linkType: hard
+
 "@types/express-serve-static-core@npm:^4.17.33":
   version: 4.17.41
   resolution: "@types/express-serve-static-core@npm:4.17.41"
@@ -2109,7 +2128,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:^4.17.21":
+"@types/express@npm:*, @types/express@npm:^4.17.21":
   version: 4.17.21
   resolution: "@types/express@npm:4.17.21"
   dependencies:
@@ -2705,6 +2724,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"busboy@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "busboy@npm:1.6.0"
+  dependencies:
+    streamsearch: "npm:^1.1.0"
+  checksum: 10c0/fa7e836a2b82699b6e074393428b91ae579d4f9e21f5ac468e1b459a244341d722d2d22d10920cdd849743dbece6dca11d72de939fb75a7448825cf2babfba1f
+  languageName: node
+  linkType: hard
+
 "bytes@npm:3.1.2":
   version: 3.1.2
   resolution: "bytes@npm:3.1.2"
@@ -2881,6 +2909,7 @@ __metadata:
     "@tsconfig/recommended": "npm:^1.0.3"
     "@types/babel__core": "npm:^7"
     "@types/express": "npm:^4.17.21"
+    "@types/express-fileupload": "npm:^1.5.0"
     "@types/jest": "npm:^29.5.11"
     "@types/livereload": "npm:^0"
     "@types/node": "npm:^20.10.8"
@@ -2888,6 +2917,8 @@ __metadata:
     "@types/shelljs": "npm:^0"
     babel-jest: "npm:^29.7.0"
     express: "npm:^4.18.2"
+    express-fileupload: "npm:^1.5.0"
+    highlight.js: "npm:^11.9.0"
     jest: "npm:^29.7.0"
     livereload: "npm:^0.9.3"
     nodemon: "npm:^3.0.2"
@@ -3305,6 +3336,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"express-fileupload@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "express-fileupload@npm:1.5.0"
+  dependencies:
+    busboy: "npm:^1.6.0"
+  checksum: 10c0/987deead0e04c483afa9d3d624d82c9d8abba1681cbf2f24b6d33a50d07dfbc8dfe0ec0be251fc754e085c09129db9ccbcbcc0d1d2de57e3604661c278e3d047
+  languageName: node
+  linkType: hard
+
 "express@npm:^4.18.2":
   version: 4.18.2
   resolution: "express@npm:4.18.2"
@@ -3633,6 +3673,13 @@ __metadata:
   dependencies:
     function-bind: "npm:^1.1.2"
   checksum: 10c0/5d415b114f410661208c95e7ab4879f1cc2765b8daceff4dc8718317d1cb7b9ffa7c5d1eafd9a4389c9aab7445d6ea88e05f3096cb1e529618b55304956b87fc
+  languageName: node
+  linkType: hard
+
+"highlight.js@npm:^11.9.0":
+  version: 11.9.0
+  resolution: "highlight.js@npm:11.9.0"
+  checksum: 10c0/27cfa8717dc9d200aecbdb383eb122d5f45ce715d2f468583785d36fbfe5076ce033abb02486dc13b407171721cda6f474ed3f3a5a8e8c3d91367fa5f51ee374
   languageName: node
   linkType: hard
 
@@ -5791,6 +5838,13 @@ __metadata:
   version: 2.0.1
   resolution: "statuses@npm:2.0.1"
   checksum: 10c0/34378b207a1620a24804ce8b5d230fea0c279f00b18a7209646d5d47e419d1cc23e7cbf33a25a1e51ac38973dc2ac2e1e9c647a8e481ef365f77668d72becfd0
+  languageName: node
+  linkType: hard
+
+"streamsearch@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "streamsearch@npm:1.1.0"
+  checksum: 10c0/fbd9aecc2621364384d157f7e59426f4bfd385e8b424b5aaa79c83a6f5a1c8fd2e4e3289e95de1eb3511cb96bb333d6281a9919fafce760e4edb35b2cd2facab
   languageName: node
   linkType: hard
 

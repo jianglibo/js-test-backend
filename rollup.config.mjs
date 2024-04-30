@@ -26,7 +26,10 @@ export default {
 			plugins: [terser()]
 		}
 	],
-	plugins: [typescript(), json(), nodeResolve({
+	plugins: [typescript(), json(),
+	// nodePolyfills()
+	, nodeResolve({
+		// preferBuiltins: false
 		// exportConditions: ['node']
 	}), commonjs(
 		// {

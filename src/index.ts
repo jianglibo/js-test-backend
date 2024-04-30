@@ -1,4 +1,6 @@
 import express, { Express, NextFunction, Request, Response } from "express";
+import fileUpload from "express-fileupload";
+import hljs from "highlight.js";
 import path from "path";
 var shelljs = require("shelljs");
 
@@ -18,7 +20,7 @@ function copyHeaders(req: Request, res: Response, next: NextFunction) {
 
 	headersToCopy.forEach(header => {
 		// Check if the header exists in the request
-		console.log(req.headers)
+		// console.log(req.headers)
 		if (req.header(header)) {
 			// Copy the header to the response
 			res.setHeader(header, req.header(header) as string);
@@ -41,8 +43,30 @@ export default () => {
 	app.use(express.static('public'))
 	app.use(express.json())
 	app.use(copyHeaders)
+	app.use(fileUpload())
 
 	let cache: unknown = null;
+
+	// multipart file, save to dis
+	app.post('/upload', (req: Request, res: Response) => {
+		if (!req.files) {
+			return res.status(400).send({ error: 'No file uploaded' });
+		}
+
+		const file = req.files.file as any;
+		const filename = file.name;
+
+		file.mv(path.resolve(`public/uploads/${filename}`), (err: any) => {
+			if (err) {
+				// If there's an error, send an error response
+				return res.status(500).send({ error: 'File upload failed', message: err.message });
+			}
+
+			// If file upload is successful, send a success response with the filename
+			res.status(200).send({ data: { filename } });
+		});
+	});
+
 
 	app.get("/completion", async (req: Request, res: Response) => {
 		// get the url from environment variable COMPLETION_ENDPOINT
@@ -262,6 +286,38 @@ export default () => {
 		);
 	})
 
+	app.get("/helpers/:name/", (req: Request, res: Response) => {
+		const xRequestWith = req.header('X-Requested-With')
+		const isPjax = req.header('Ph-Pjax-Request')
+
+		if (xRequestWith === 'XMLHttpRequest' && !isPjax) {
+			// if (true) {
+
+			const pageStr = (req.query.page || "1").toString()
+			const sizeStr = (req.query.size || "10").toString()
+
+			const page = parseInt(pageStr)
+			const size = parseInt(sizeStr)
+			console.log("page: ", page, ", size: ", size)
+
+			const items = Array.from({ length: size }, (_, i) => {
+				return {
+					id: i + (page - 1) * size,
+					task: `Item ${i + (page - 1) * size}`,
+					dueDate: '2021-01-01',
+					priority: 'high'
+				}
+			})
+			const respData = {
+				data: items
+			}
+			res.json(respData)
+		} else {
+			const name = req.params.name
+			res.sendFile(path.resolve(`public/helpers/${name}.html`));
+		}
+	})
+
 	app.get("/page", (req: Request, res: Response) => {
 		// X-Requested-With
 		if (req.header('X-Requested-With') === 'XMLHttpRequest') {
@@ -292,12 +348,126 @@ export default () => {
 		});
 	})
 
+
+	app.get("/pages/redirect", (req: Request, res: Response) => {
+		const { url } = req.query
+		res.redirect(url as string)
+	})
+
+
 	app.get("/pages/:name", (req: Request, res: Response) => {
 		let name = req.params.name
 		if (!name.endsWith('.html')) {
 			name = name + '.html'
 		}
 		res.sendFile(path.resolve(`public/pages/${name}`));
+	})
+
+	app.get("/highlight/", (req: Request, res: Response) => {
+		const content = req.query.content as string
+		const lang = req.query.lang as string
+		const css = req.query.css as string
+
+		if (css) {
+			const version = req.query.version || '11.9.0'
+			const url = `https://cdnjs.cloudflare.com/ajax/libs/highlight.js/${version}/styles/default.min.css`
+			// fetch the content and return to client
+			fetch(url)
+				.then(response => response.text())
+				.then(css => {
+					res.send(css)
+				})
+		} else {
+			const highlightedCode = hljs.highlight(
+				content,
+				{ language: lang }
+			).value
+			res.send(highlightedCode)
+		}
+	})
+
+
+	app.get("/fixtures/data-consumer", (req: Request, res: Response) => {
+		res.json({
+			data: [
+				{
+					id: 1,
+					name: 'A'
+				},
+				{
+					id: 2,
+					name: 'B'
+				},
+				{
+					id: 3,
+					name: 'C'
+				}
+			]
+		});
+	})
+
+	app.post("/fixtures/form-submit", (req: Request, res: Response) => {
+		const body = req.body
+		res.json({
+			"data": [
+				{
+					"action": "FAILED_VALIDATES",
+					"params": {
+						"failedValidates": [
+							{
+								"name": "content",
+								"message": "size must be between 6 and 1048576"
+							}
+						]
+					}
+				},
+				{
+					"action": "TOAST",
+					"params": {
+						"toast": {
+							"icon": "warning",
+							"title": "validate failed.",
+							"timer": 3000
+						}
+					}
+				}
+			]
+		});
+	})
+
+	app.get("/fixtures/toast", (req: Request, res: Response) => {
+		const { position, toast } = req.query
+		let item
+		if (toast) {
+			item = {
+				"action": "TOAST",
+				"params": {
+					"toast": {
+						"position": position || "top-end",
+						"icon": "warning",
+						"title": "validate failed.",
+						"timer": 3000
+					}
+				}
+			}
+		} else {
+			item = {
+				"action": "SWAL2",
+				"params": {
+					"swal2": {
+						"icon": "info",
+						"title": "Deploy Outputs",
+						"text": "executing ./deploy.sh\nuser letsscript exists\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nCreate unit file: /etc/systemd/system/demoserverbg.service\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nCreate env file: /etc/demoserverbg/env\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nStart demoserverbg.service\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nlast exit code: 1\ndemoserverbg is running.\nbase64: invalid input\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nsudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper\nsudo: a password is required\nread process output done.\nexitCode:1",
+						"wrap": "<pre><code>////</code><pre>"
+					}
+				}
+			}
+		}
+		res.json(
+			{
+				"data": [item]
+			}
+		);
 	})
 
 	app.post("/pages/form-1", (req: Request, res: Response) => {
