@@ -1,11 +1,11 @@
-session_name: codemirror-play-front
+session_name: js-test-backend
 windows:
   - window_name: watchers-window
     # start_directory: ./test-rollup
     layout: tiled
     #layout: main-horizontal
-    # shell_command_before:
-      # - cd ./fileuploaddemo # run as a first command in all panes
+    shell_command_before:
+      - cd ./js-test-backend
     options:
       main-pane-height: 30
     panes:

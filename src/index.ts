@@ -2,6 +2,7 @@ import express, { Express, NextFunction, Request, Response } from "express";
 import fileUpload from "express-fileupload";
 import hljs from "highlight.js";
 import path from "path";
+import basicAuth from 'basic-auth';
 var shelljs = require("shelljs");
 
 interface PostResponse {
@@ -483,6 +484,22 @@ export default () => {
 	})
 
 	// return index.html if no router matched
+
+	app.get("/ng-check", (req: Request, res: Response) => {
+		const credentials = basicAuth(req);
+		if (credentials) {
+			const { name, pass } = credentials;
+			// Replace 'your_username' and 'your_password' with your actual credentials
+			if (name === process.env.NG_USER && pass === process.env.NG_PASS) {
+				// Authentication successful
+				res.status(200).send('Authentication successful');
+			}
+		}
+		// No authentication credentials provided
+		res.statusCode = 401
+		res.setHeader('WWW-Authenticate', 'Basic realm="example"')
+		res.end('Access denied')
+	})
 
 	app.get('*', (req, res) => {
 		res.sendFile(path.resolve('public/index.html'));
