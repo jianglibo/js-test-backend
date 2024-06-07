@@ -159,6 +159,16 @@ export default () => {
 
 	})
 
+	app.post("/uploadTrack", (req: Request, res: Response) => {
+		// response with a {data: {id: number, content: string}}
+		res.send(
+			{
+				data: {
+					"trackid": "anuuidvalue"
+				}
+			});
+	})
+
 	app.post("/cmd", (req: Request, res: Response) => {
 		// response with a {data: {id: number, content: string}}
 		res.send(
