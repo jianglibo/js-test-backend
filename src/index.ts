@@ -497,12 +497,34 @@ export default () => {
 
 	app.get("/ng-check", (req: Request, res: Response) => {
 		const credentials = basicAuth(req);
+
+		// const authHeader = req.headers.authorization;
+		// console.log(`authHeader:${authHeader}`)
+
+		// res.status(200).send('Authentication successful');
+		// return
+		//                const credentials1 = Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
+		//              const username = credentials1[0];
+		//              const password = credentials1[1];
+		// }
+
+		const authHeader = req.headers.authorization;
+		if (authHeader && authHeader.indexOf('token') !== -1) {
+			res.status(200).send('Authentication successful');
+			return
+			// const credentials1 = Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
+			// const username = credentials1[0];
+			// const password = credentials1[1];
+			// console.log(`username: ${username}, password: ${password}`)
+		}
+
 		if (credentials) {
 			const { name, pass } = credentials;
 			// Replace 'your_username' and 'your_password' with your actual credentials
 			if (name === process.env.NG_USER && pass === process.env.NG_PASS) {
 				// Authentication successful
 				res.status(200).send('Authentication successful');
+				return
 			}
 		}
 		// No authentication credentials provided
